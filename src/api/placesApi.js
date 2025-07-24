@@ -7,7 +7,10 @@ export async function fetchPlaces() {
     const res = await axios.get(`${BASE_URL}/places`);
     return res.data.places;
   } catch (error) {
+    if (error.response?.status === 404) {
+      throw new Error("404");
+    }
     console.error(error);
-    return [];
+    throw error;
   }
 }

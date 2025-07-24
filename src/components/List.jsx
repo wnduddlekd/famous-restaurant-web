@@ -5,15 +5,28 @@ import Card from "./Card";
 export default function List() {
   const [loading, setLoading] = useState(true);
   const [places, setPlaces] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function loadData() {
-      const data = await fetchPlaces();
-      setPlaces(data);
-      setLoading(false);
+      try {
+        const data = await fetchPlaces();
+        setPlaces(data);
+        setError(null);
+      } catch (err) {
+        if (err.message === "404") {
+          setError("요청하신 데이터를 찾을 수 없습니다 404");
+        } else {
+          setError("데이터를 불러오는 중 오류가 발생했습니다");
+        }
+      } finally {
+        setLoading(false);
+      }
     }
     loadData();
   }, []);
+
+  if (error) return <p className="text-2xl font-bold text-gray-500">{error}</p>;
 
   return (
     <div className="w-[1270px] p-10">
